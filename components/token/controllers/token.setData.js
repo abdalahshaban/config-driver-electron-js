@@ -1,16 +1,17 @@
 const graphene = require('graphene-pk11')
 const usbDetect = require('usb-detection')
 const path = require('path')
-const { generateAddress } = require('./web3.generateAddress')
-const { sendPublicKey } = require('./token.sendPublicKey')
+const generateAddress = require('./web3.generateAddress')
+const sendPublicKey = require('./token.sendPublicKey')
 usbDetect.startMonitoring()
 
 /**
- * @desc — set Data in token for first time before user use it
+ * @desc — set Data in `token` for first time before user use it
  *
  * @return bool - success or failure
  */
 async function setData(req, res) {
+  console.log('setData')
   try {
     /**
      *
@@ -27,7 +28,6 @@ async function setData(req, res) {
      * @return bool - success or failure in get device
      */
     if (device.length === 0) {
-      console.log(false)
       return res.status(400).json({ success: false })
     }
     /**
@@ -35,7 +35,7 @@ async function setData(req, res) {
      * @desc — load dll library from lib folder
      */
     let dllPath = path.join(__dirname, `../../../lib/eps2003csp11.dll`)
-    mod = graphene.Module.load(dllPath)
+    let mod = graphene.Module.load(dllPath)
     /**
      *
      * @desc — initialize lib to use it after
@@ -52,7 +52,6 @@ async function setData(req, res) {
      */
     if (!slots.length) {
       mod.finalize()
-      console.log(false)
       return res.status(400).json({ success: false })
     }
     /**
@@ -67,8 +66,6 @@ async function setData(req, res) {
     const session = slot.open(
       graphene.SessionFlag.RW_SESSION | graphene.SessionFlag.SERIAL_SESSION,
     )
-
-    graphene.Session
     /**
      *
      * @desc — OPEN SESSION WITH TOKEN USING PIN AND USER TYPE USER
@@ -94,7 +91,7 @@ async function setData(req, res) {
      *
      *@desc — generate account from web3 using privat key
      */
-    let { address, success } = await generateAddress(privateKey)
+    let { address, success } = await generateAddress()
     if (!success) return res.status(400).json({ message: false })
     /**
      *
@@ -103,23 +100,41 @@ async function setData(req, res) {
     const addressObject = session.create({
       class: graphene.ObjectClass.DATA,
       label: 'data.address',
+      id: new Buffer([1, 2, 3, 4, 5]),
       application: 'ISEC',
-      objectId: Buffer.from([1]),
       token: true,
       modifiable: true,
-      value: address,
+      value: Buffer.from(JSON.stringify(address)),
     })
     /**
      *
-     *@desc —send public key to back end
+     *@desc —get data from token using `label` & `application`
+     */
+    let isecSession = session
+      .find({
+        application: 'ISEC',
+        label: 'data.address',
+      })
+      .items(0)
+      .toType()
+    // console.log(JSON.parse(isecSession.value.toString()), 'isecSession')
+    /**
+     *
+     *@desc —send public key to server
      */
     let checkIfSended = await sendPublicKey(publicKey)
 
     if (!checkIfSended) return res.status(400).json({ message: false })
-
-    return res.status(400).json({ message: true })
+    /**
+     *
+     *@desc —close session btw token & application
+     */
+    session.close()
+    mod.finalize()
+    return res.status(200).json({ message: true })
   } catch (error) {
-    console.log(error)
+    console.log(error, 'error')
+    mod.finalize()
     return res.status(400).json({ message: false })
   }
 }

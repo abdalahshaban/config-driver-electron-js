@@ -1,5 +1,6 @@
-import { app, Tray, Menu, BrowserWindow, dialog, remote } from 'electron';
+import { app, Tray, Menu, BrowserWindow } from 'electron';
 import * as path from 'path';
+const axios = require('axios')
 const server = require('./app.js');
 
 let tray: Tray = null;
@@ -45,20 +46,16 @@ function createWindow() {
 
 function initTray() {
 
-    tray = new Tray(path.join(__dirname, './assets/img/icon.jpg'));
+    tray = new Tray(path.join(__dirname, './assets/img/setting.jpg'));
     const contextMenu = Menu.buildFromTemplate([
         {
-            label: 'App Name',
-            click: function () {
-                console.log(mainWindow.title);
-            }
-        },
-        {
-            label: 'set in token',
+            label: 'set Data in token',
             click: () => {
                 /**
                  * @desc send request to localhost to set date in token
                  */
+
+                axios.post('http://127.0.0.1:3000/api/token/set-data', { pin: "11112222" })
 
             }
         },

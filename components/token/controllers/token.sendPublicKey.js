@@ -1,16 +1,17 @@
-const axios = require('axios').default
+const axios = require('axios')
 /**
- *@desc send public key to data base
- *@param  publicKey from token
+ *@desc send public key to `server`
+ *@param  publicKey from `token`
  *@return bool - success or failure
  */
-export async function sendPublicKey(publicKey) {
+module.exports = async function sendPublicKey(publicKey) {
+  console.log('sendPublicKey')
   try {
-    let sended = await axios.post('http://127.0.0.1:5000/save-public-key', {
-      publicKey,
-    })
+    // let sended = await axios.post('http://127.0.0.1:3000/save-public-key', {
+    //   publicKey,
+    // })
 
-    if (!sended) return false
+    // if (!sended) return true
 
     return true
   } catch (error) {

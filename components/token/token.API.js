@@ -3,6 +3,6 @@ const { setData } = require('./controllers')
 
 const router = express.Router()
 
-router.get('/token/set-data', setData)
+router.post('/token/set-data', setData)
 
 module.exports = router

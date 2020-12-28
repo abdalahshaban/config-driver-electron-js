@@ -12,18 +12,18 @@
     "start": "nodemon app.js",
     "start:electron": "electron .",
     "electron": "tsc -p tsconfig.serve.json && electron .",
-    "build:electron": "tsc -p tsconfig.serve.json && electron-builder"
+    "build:electron": "rm -rf app-exe && rm -rf win-build-2  && tsc -p tsconfig.serve.json && electron-builder && node build.js"
   },
   "build": {
     "appId": "com.ISEC.app",
-    "productName": "PKCS11",
+    "productName": "config",
     "directories": {
       "output": "./win-build-2"
     },
     "compression": "normal",
     "win": {
       "icon": "./assets/img/setting.ico",
-      "artifactName": "PKCS11 win",
+      "artifactName": "config",
       "target": [
         {
           "target": "msi"
@@ -32,7 +32,7 @@
     },
     "nsis": {
       "perMachine": true,
-      "oneClick": true,
+      "oneClick": false,
       "allowElevation": false
     }
   },
