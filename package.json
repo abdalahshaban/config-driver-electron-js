@@ -12,18 +12,18 @@
     "start": "nodemon app.js",
     "start:electron": "electron .",
     "electron": "tsc -p tsconfig.serve.json && electron .",
-    "build:electron": "rm -rf app-exe && rm -rf win-build-2  && tsc -p tsconfig.serve.json && electron-builder && node build.js"
+    "build:electron": "rm -rf app-exe && rm -rf win-build  && tsc -p tsconfig.serve.json && node build.js"
   },
   "build": {
     "appId": "com.ISEC.app",
-    "productName": "config",
+    "productName": "AdminDriver",
     "directories": {
-      "output": "./win-build-2"
+      "output": "./win-build"
     },
     "compression": "normal",
     "win": {
       "icon": "./assets/img/setting.ico",
-      "artifactName": "config",
+      "artifactName": "AdminDriver",
       "target": [
         {
           "target": "msi"

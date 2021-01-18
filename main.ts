@@ -21,7 +21,15 @@ if (!gotTheLock) {
     });
 
     // Create win, load the rest of the app, etc...
-    app.whenReady().then(createWindow);
+    // app.whenReady().then(createWindow);
+
+    app.on('ready', () => {
+        app.setLoginItemSettings({
+            openAtLogin: true,
+            enabled: true,
+        })
+        createWindow()
+    })
 }
 
 function createWindow() {
@@ -37,7 +45,7 @@ function createWindow() {
     });
 
 
-    mainWindow.loadURL('http://localhost:3000');
+    mainWindow.loadURL('http://127.0.0.1:3003');
     mainWindow.hide();
     initTray();
 
@@ -46,16 +54,17 @@ function createWindow() {
 
 function initTray() {
 
-    tray = new Tray(path.join(__dirname, './assets/img/setting.jpg'));
+    tray = new Tray(path.join(__dirname, './assets/img/icon.ico'));
     const contextMenu = Menu.buildFromTemplate([
         {
             label: 'set Data in token',
-            click: () => {
+            click: async () => {
                 /**
                  * @desc send request to localhost to set date in token
                  */
 
-                axios.post('http://127.0.0.1:3000/api/token/set-data', { pin: "11112222" })
+                let setDate = await axios.post('http://127.0.0.1:3000/api/token/set-data', { pin: "11112222" })
+                console.log(setDate);
 
             }
         },

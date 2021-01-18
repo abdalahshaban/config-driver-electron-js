@@ -4,7 +4,7 @@ let prime_length = 2048
 const diffHell = crypto.createDiffieHellman(prime_length)
 
 /**
- * @desc generate account from web3 using privat key
+ *@desc generate account from web3 using privat key
  *@return `address`
  */
 module.exports = async function generateAddress() {
